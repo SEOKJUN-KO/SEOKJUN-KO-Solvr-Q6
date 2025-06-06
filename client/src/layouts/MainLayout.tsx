@@ -3,31 +3,6 @@ import { Outlet, Link } from 'react-router-dom'
 const MainLayout = () => {
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center">
-              <Link to="/" className="text-xl font-bold text-primary-600">
-                Deep Sleep
-              </Link>
-            </div>
-            <nav className="flex space-x-4">
-              <Link
-                to="/"
-                className="text-neutral-600 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium"
-              >
-                홈
-              </Link>
-              <Link
-                to="/sleep"
-                className="text-neutral-600 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium"
-              >
-                수면 기록
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
       <main className="flex-grow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <Outlet />

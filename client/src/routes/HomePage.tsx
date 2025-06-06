@@ -26,6 +26,9 @@ const HomePage = () => {
         <Link to="/analysis" className="px-8 py-3 rounded-lg bg-amber-500 text-white text-lg font-semibold shadow hover:bg-amber-600 transition">
           수면 분석 보기
         </Link>
+        <Link to="/ai-analysis" className="px-8 py-3 rounded-lg bg-purple-600 text-white text-lg font-semibold shadow hover:bg-purple-700 transition">
+          AI 수면 진단
+        </Link>
       </div>
       <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="card">

@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm'
+import { eq, and, gte, lte } from 'drizzle-orm'
 import { sleepRecords } from '../db/schema'
 import { Database } from '../types/database'
 import { SleepRecord, NewSleepRecord, UpdateSleepRecord } from '../types/sleep'
@@ -15,10 +15,20 @@ export const createSleepService = ({ db }: SleepServiceDeps) => {
     return newRecord
   }
 
-  const getRecords = async (userId: string): Promise<SleepRecord[]> => {
-    return db.select().from(sleepRecords)
-      .where(eq(sleepRecords.userId, userId))
-      .orderBy(sleepRecords.createdAt)
+  const getRecords = async (userId: string, startDate?: Date, endDate?: Date): Promise<SleepRecord[]> => {
+    let query = db.select().from(sleepRecords)
+      .where(eq(sleepRecords.userId, userId));
+
+    if (startDate && endDate) {
+      query = query.where(
+        and(
+          gte(sleepRecords.sleepStartTime, startDate.toISOString()),
+          lte(sleepRecords.sleepStartTime, endDate.toISOString())
+        )
+      );
+    }
+
+    return query.orderBy(sleepRecords.createdAt);
   }
 
   const updateRecord = async (id: number, record: UpdateSleepRecord): Promise<SleepRecord | undefined> => {

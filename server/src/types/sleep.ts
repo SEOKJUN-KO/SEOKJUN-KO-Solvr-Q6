@@ -3,10 +3,10 @@ export interface SleepRecord {
   userId: string
   sleepStartTime: string
   sleepEndTime: string
-  notes?: string
+  notes: string | null
   satisfaction: number
-  createdAt: string
-  updatedAt: string
+  createdAt: string | null
+  updatedAt: string | null
 }
 
 export type NewSleepRecord = Omit<SleepRecord, 'id' | 'createdAt' | 'updatedAt'>

@@ -14,7 +14,9 @@ export const createRoutes = (context: AppContext) => async (fastify: FastifyInst
   fastify.register(createUserRoutes(context), { prefix: '/api/users' })
 
   // 수면 기록 관련 라우트
-  fastify.register(sleepRoutes, { prefix: '/api' })
+  fastify.register(async (instance) => {
+    await sleepRoutes(instance, context)
+  }, { prefix: '/api' })
 
   // 분석 관련 라우트
   fastify.register(analysisRoutes)
