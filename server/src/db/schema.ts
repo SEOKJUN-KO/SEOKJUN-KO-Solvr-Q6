@@ -28,6 +28,7 @@ export const sleepRecords = sqliteTable('sleep_records', {
   sleepStartTime: text('sleepStartTime').notNull(),
   sleepEndTime: text('sleepEndTime').notNull(),
   notes: text('notes'),
+  satisfaction: integer('satisfaction').notNull().default(3), // 1-5 사이의 만족도
   createdAt: text('createdAt').default(sql`CURRENT_TIMESTAMP`),
   updatedAt: text('updatedAt').default(sql`CURRENT_TIMESTAMP`),
 })

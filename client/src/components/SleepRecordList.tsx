@@ -13,6 +13,7 @@ export const SleepRecordList = observer(({ viewModel }: Props) => {
     sleepStartTime: '',
     sleepEndTime: '',
     notes: '',
+    satisfaction: 3,
   });
 
   const formatDate = (dateString: string) => {
@@ -40,6 +41,7 @@ export const SleepRecordList = observer(({ viewModel }: Props) => {
       sleepStartTime: record.sleepStartTime,
       sleepEndTime: record.sleepEndTime,
       notes: record.notes || '',
+      satisfaction: record.satisfaction,
     });
   };
 
@@ -77,6 +79,9 @@ export const SleepRecordList = observer(({ viewModel }: Props) => {
               </h3>
               <p className="text-gray-600">
                 수면 시간: {calculateSleepDuration(record.sleepStartTime, record.sleepEndTime)}
+              </p>
+              <p className="text-gray-600">
+                만족도: {record.satisfaction}/5
               </p>
               {record.notes && (
                 <p className="mt-2 text-gray-700">{record.notes}</p>
@@ -146,6 +151,29 @@ export const SleepRecordList = observer(({ viewModel }: Props) => {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="수면 중 특이사항이나 느낀 점을 기록해보세요"
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  수면 만족도
+                </label>
+                <div className="flex justify-between items-center">
+                  {[1, 2, 3, 4, 5].map((value) => (
+                    <label key={value} className="flex flex-col items-center">
+                      <input
+                        type="radio"
+                        name="satisfaction"
+                        value={value}
+                        checked={editForm.satisfaction === value}
+                        onChange={(e) => setEditForm(prev => ({ ...prev, satisfaction: parseInt(e.target.value) }))}
+                        className="sr-only"
+                      />
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center cursor-pointer
+                        ${editForm.satisfaction === value ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>
+                        {value}
+                      </div>
+                    </label>
+                  ))}
+                </div>
               </div>
               <div className="flex justify-end space-x-2">
                 <button

@@ -19,6 +19,7 @@ export async function getDb(): Promise<DrizzleDatabase> {
         sleepStartTime TEXT NOT NULL,
         sleepEndTime TEXT NOT NULL,
         notes TEXT,
+        satisfaction INTEGER NOT NULL DEFAULT 3,
         createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
         updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
       );
