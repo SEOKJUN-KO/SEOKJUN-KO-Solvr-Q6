@@ -5,6 +5,7 @@
 
 - 수면 시간 기록 및 관리
 - 수면 패턴 분석
+- AI 기반 수면 진단 및 맞춤형 조언
 
 ## 기술 스택
 
@@ -19,12 +20,14 @@
 - TypeScript
 - SQLite
 - DrizzleORM
+- Google Gemini AI
 
 ## 시작하기
 
 ### 필수 조건
 - Node.js >= 22.0.0
 - pnpm
+- Google AI API 키
 
 ### 설치
 ```bash
@@ -46,6 +49,7 @@ pnpm dev
 ### 분석
 - `GET /api/analysis/monthly?userId=...&year=...&month=...` — 월간 분석 데이터
 - `GET /api/analysis/range?userId=...&start=...&end=...` — 범위 분석 데이터
+- `POST /api/analyze` — AI 기반 수면 진단
 
 ### 헬스 체크
 - `GET /api/health` — 서버 상태 확인
@@ -62,3 +66,16 @@ pnpm dev
 - 일별 수면 사이클 개수 & 만족도 변화 시각화
 
 2. Test를 위해 Dummy 수면 데이터 추가
+
+### Task3
+1. AI 기반 수면 진단 기능 추가
+- Google Gemini AI를 활용한 수면 패턴 분석
+- 최근 한 달간의 수면 데이터 기반 분석
+- 수면 단계(깊은 수면, 얕은 수면, REM 수면) 분석
+- 수면 효율 및 만족도 기반 점수 산출
+- 맞춤형 수면 개선 조언 제공
+
+2. UI/UX 개선
+- AI 수면 진단 페이지 추가
+- 분석 기준 및 방법에 대한 상세 설명 제공
+- 홈페이지에 AI 수면 진단 바로가기 버튼 추가
