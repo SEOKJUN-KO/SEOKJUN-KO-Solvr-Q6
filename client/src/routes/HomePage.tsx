@@ -3,42 +3,44 @@ import { Link } from 'react-router-dom'
 const HomePage = () => {
   return (
     <div className="text-center">
-      <h1 className="text-4xl font-bold text-neutral-900 mb-6">풀스택 보일러플레이트</h1>
-      <p className="text-xl text-neutral-600 mb-8">
-        React, Vite, TailwindCSS, Fastify, SQLite를 활용한 풀스택 웹 애플리케이션
-        보일러플레이트입니다.
-      </p>
-      <div className="flex justify-center space-x-4">
-        <Link to="/users" className="btn btn-primary">
-          유저 관리 시작하기
-        </Link>
-        <a
-          href="https://github.com/yourusername/fullstack-boilerplate"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn btn-secondary"
-        >
-          GitHub 저장소
-        </a>
+      {/* 수면 관련 일러스트 */}
+      <div className="flex justify-center mb-6">
+        <svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="56" cy="48" r="32" fill="#E0E7FF" />
+          <path d="M80 48c0 17.673-14.327 32-32 32a32 32 0 1 1 0-64c2.21 0 4 1.79 4 4s-1.79 4-4 4a24 24 0 1 0 0 48c2.21 0 4 1.79 4 4s-1.79 4-4 4z" fill="#6366F1" />
+          <circle cx="76" cy="28" r="3" fill="#FBBF24" />
+          <circle cx="68" cy="20" r="2" fill="#FBBF24" />
+          <circle cx="82" cy="36" r="1.5" fill="#FBBF24" />
+        </svg>
       </div>
-
+      <h1 className="text-4xl font-extrabold text-blue-900 mb-4 tracking-tight">Deep Sleep</h1>
+      <p className="text-lg text-neutral-700 mb-8 max-w-xl mx-auto leading-relaxed">
+        <span className="font-semibold text-blue-700">깊은 잠, 더 나은 하루</span><br />
+        Deep Sleep은 당신의 수면 패턴을 기록하고, 주간 단위로 수면의 질과 만족도를 한눈에 확인할 수 있는 수면 관리 앱입니다.<br />
+        오늘의 수면을 기록하며, 더 건강한 내일을 만들어보세요.
+      </p>
+      <div className="flex justify-center space-x-4 mb-12">
+        <Link to="/sleep" className="px-8 py-3 rounded-lg bg-blue-600 text-white text-lg font-semibold shadow hover:bg-blue-700 transition">
+          수면 기록 시작하기
+        </Link>
+      </div>
       <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="card">
-          <h2 className="text-xl font-semibold mb-4">React + Vite</h2>
+          <h2 className="text-xl font-semibold mb-4">수면 기록</h2>
           <p className="text-neutral-600">
-            빠른 개발 경험을 제공하는 React와 Vite를 사용하여 모던 UI를 구축합니다.
+            취침/기상 시간, 수면 만족도, 특이사항을 간편하게 기록할 수 있습니다.
           </p>
         </div>
         <div className="card">
-          <h2 className="text-xl font-semibold mb-4">TailwindCSS</h2>
+          <h2 className="text-xl font-semibold mb-4">주간 통계</h2>
           <p className="text-neutral-600">
-            유틸리티 우선 CSS 프레임워크로 빠르고 유연한 디자인을 구현합니다.
+            한 주간의 수면 패턴과 만족도를 표로 확인할 수 있습니다.
           </p>
         </div>
         <div className="card">
-          <h2 className="text-xl font-semibold mb-4">Fastify + SQLite</h2>
+          <h2 className="text-xl font-semibold mb-4">건강한 습관</h2>
           <p className="text-neutral-600">
-            빠른 백엔드 API와 간편한 데이터베이스 관리를 제공합니다.
+            꾸준한 기록을 통해 나만의 건강한 수면 루틴을 만들어보세요.
           </p>
         </div>
       </div>
