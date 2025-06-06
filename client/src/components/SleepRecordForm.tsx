@@ -1,0 +1,99 @@
+import { observer } from 'mobx-react-lite';
+import { useState } from 'react';
+import { SleepViewModel } from '../viewmodels/SleepViewModel';
+import { NewSleepRecord } from '../types/sleep';
+
+type Props = {
+  viewModel: SleepViewModel;
+  userId: string;
+};
+
+export const SleepRecordForm = observer(({ viewModel, userId }: Props) => {
+  const [formData, setFormData] = useState<NewSleepRecord>({
+    userId,
+    sleepStartTime: '',
+    sleepEndTime: '',
+    notes: '',
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await viewModel.createRecord(formData);
+      setFormData({
+        userId,
+        sleepStartTime: '',
+        sleepEndTime: '',
+        notes: '',
+      });
+    } catch (error) {
+      console.error('수면 기록 생성 실패:', error);
+    }
+  };
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded-lg shadow">
+      <h2 className="text-xl font-semibold mb-4">수면 기록 추가</h2>
+      
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          취침 시간
+        </label>
+        <input
+          type="datetime-local"
+          name="sleepStartTime"
+          value={formData.sleepStartTime}
+          onChange={handleChange}
+          required
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          기상 시간
+        </label>
+        <input
+          type="datetime-local"
+          name="sleepEndTime"
+          value={formData.sleepEndTime}
+          onChange={handleChange}
+          required
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          특이사항
+        </label>
+        <textarea
+          name="notes"
+          value={formData.notes}
+          onChange={handleChange}
+          rows={3}
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="수면 중 특이사항이나 느낀 점을 기록해보세요"
+        />
+      </div>
+
+      <button
+        type="submit"
+        disabled={viewModel.loading}
+        className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+      >
+        {viewModel.loading ? '저장 중...' : '기록하기'}
+      </button>
+    </form>
+  );
+}); 

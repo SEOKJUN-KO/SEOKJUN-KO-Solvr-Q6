@@ -10,6 +10,19 @@ export async function getDb(): Promise<DrizzleDatabase> {
   if (!db) {
     const sqlite = new Database(env.DATABASE_URL)
     db = drizzle(sqlite, { schema }) as DrizzleDatabase
+    
+    // 데이터베이스 마이그레이션
+    sqlite.exec(`
+      CREATE TABLE IF NOT EXISTS sleep_records (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id TEXT NOT NULL,
+        sleepStartTime TEXT NOT NULL,
+        sleepEndTime TEXT NOT NULL,
+        notes TEXT,
+        createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
+        updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
+      );
+    `)
   }
   return db
 }

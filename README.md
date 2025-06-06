@@ -1,85 +1,85 @@
-# 풀스택 서비스 보일러 플레이트
+# 수면 트래커
 
-## 프로젝트 개요
+현대인의 수면 패턴을 관리하고 개선하기 위한 웹 애플리케이션입니다.
 
-이 보일러 플레이트는 풀스택 웹 애플리케이션 개발을 위한 기본 구조를 제공합니다. monorepo 구조로 클라이언트와 서버를 효율적으로 관리하며, 현대적인 웹 개발 기술 스택을 활용합니다.
+## 주요 기능
+
+- 수면 시간 기록 및 관리
+- 수면 패턴 분석
+- 특이사항 메모 기능
+- 직관적인 UI/UX
 
 ## 기술 스택
 
-### 공통
+### Frontend
+- React
+- TypeScript
+- Tailwind CSS
+- MobX (상태 관리)
 
-- 패키지 매니저: pnpm (workspace 기능 활용)
-- 언어: TypeScript
-- Node.js 버전: 22.x
-- 테스트: Vitest
-- 코드 품질: Prettier
+### Backend
+- Fastify
+- TypeScript
+- SQLite
+- DrizzleORM
 
-### 클라이언트
+## 시작하기
 
-- 프레임워크: React
-- 빌드 도구: Vite
-- 라우팅: React Router
-- 스타일링: TailwindCSS
+### 필수 조건
+- Node.js >= 22.0.0
+- pnpm
 
-### 서버
-
-- 프레임워크: Fastify
-- 데이터베이스: SQLite with DirzzleORM
-
-## 설치 및 실행
-
-### 초기 설치
-
+### 설치
 ```bash
-# 프로젝트 루트 디렉토리에서 실행
+# 의존성 설치
 pnpm install
-```
 
-### 개발 서버 실행
-
-```bash
-# 클라이언트 및 서버 동시 실행
+# 개발 서버 실행
 pnpm dev
-
-# 클라이언트만 실행
-pnpm dev:client
-
-# 서버만 실행
-pnpm dev:server
 ```
 
-### 테스트 실행
+### 환경 변수 설정
+`.env` 파일을 생성하고 다음 변수들을 설정하세요:
+```
+# 서버
+PORT=3000
+HOST=localhost
+DATABASE_URL=./data/sleep.db
+CORS_ORIGIN=http://localhost:5173
 
-```bash
-# 클라이언트 테스트
-pnpm test:client
-
-# 서버 테스트
-pnpm test:server
-
-# 모든 테스트 실행
-pnpm test
+# 클라이언트
+VITE_API_URL=http://localhost:3000/api
 ```
 
-### 빌드
+## 프로젝트 구조
 
-```bash
-# 클라이언트 및 서버 빌드
-pnpm build
 ```
-
-## 환경 변수 설정
-
-- 클라이언트: `client/.env` 파일에 설정 (예시는 `client/.env.example` 참조)
-- 서버: `server/.env` 파일에 설정 (예시는 `server/.env.example` 참조)
+.
+├── client/                 # 프론트엔드
+│   ├── src/
+│   │   ├── components/    # 재사용 가능한 컴포넌트
+│   │   ├── pages/        # 페이지 컴포넌트
+│   │   ├── services/     # API 서비스
+│   │   ├── types/        # 타입 정의
+│   │   └── viewmodels/   # MVVM 패턴의 ViewModel
+│   └── ...
+├── server/                # 백엔드
+│   ├── src/
+│   │   ├── db/          # 데이터베이스 관련
+│   │   ├── routes/      # API 라우트
+│   │   └── services/    # 비즈니스 로직
+│   └── ...
+└── ...
+```
 
 ## API 엔드포인트
 
-서버는 다음과 같은 기본 API 엔드포인트를 제공합니다:
+### 수면 기록
+- `POST /api/sleep` - 새로운 수면 기록 생성
+- `GET /api/sleep/:userId` - 사용자의 수면 기록 목록 조회
+- `PUT /api/sleep/:id` - 수면 기록 수정
+- `DELETE /api/sleep/:id` - 수면 기록 삭제
 
-- `GET /api/health`: 서버 상태 확인
-- `GET /api/users`: 유저 목록 조회
-- `GET /api/users/:id`: 특정 유저 조회
-- `POST /api/users`: 새 유저 추가
-- `PUT /api/users/:id`: 유저 정보 수정
-- `DELETE /api/users/:id`: 유저 삭제
+## 라이선스
+
+MIT
