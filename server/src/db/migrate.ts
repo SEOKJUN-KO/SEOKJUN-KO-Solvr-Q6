@@ -3,7 +3,7 @@ import Database from 'better-sqlite3'
 import { mkdir } from 'fs/promises'
 import { dirname } from 'path'
 import env from '../config/env'
-import { users } from './schema'
+import { users, sleepRecords } from './schema'
 import { UserRole } from '../types'
 
 // 데이터베이스 디렉토리 생성 함수
@@ -69,11 +69,26 @@ async function runMigration() {
       )
     `)
 
+    // sleep_records 테이블 생성
+    sqlite.exec(`
+      CREATE TABLE IF NOT EXISTS sleep_records (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id TEXT NOT NULL,
+        sleepStartTime TEXT NOT NULL,
+        sleepEndTime TEXT NOT NULL,
+        notes TEXT,
+        satisfaction INTEGER NOT NULL DEFAULT 3,
+        createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
+        updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
+      )
+    `)
+
     // 초기 데이터 삽입
     console.log('초기 데이터 삽입 중...')
 
     // 기존 데이터 확인
     const existingUsers = db.select().from(users)
+    const existingSleepRecords = db.select().from(sleepRecords)
 
     if ((await existingUsers).length === 0) {
       // 초기 사용자 데이터 삽입
@@ -83,6 +98,49 @@ async function runMigration() {
       console.log(`${initialUsers.length}명의 사용자가 추가되었습니다.`)
     } else {
       console.log('사용자 데이터가 이미 존재합니다. 초기 데이터 삽입을 건너뜁니다.')
+    }
+
+    if ((await existingSleepRecords).length === 0) {
+      // 초기 수면 데이터 생성 (최근 2개월)
+      const now = new Date()
+      const sleepData = []
+      
+      for (let i = 0; i < 60; i++) {
+        const date = new Date(now)
+        date.setDate(date.getDate() - i)
+        
+        // 취침 시간 (저녁 11시 ~ 새벽 1시 사이 랜덤)
+        const sleepStart = new Date(date)
+        sleepStart.setHours(23 + Math.floor(Math.random() * 2))
+        sleepStart.setMinutes(Math.floor(Math.random() * 60))
+        
+        // 기상 시간 (아침 6시 ~ 8시 사이 랜덤)
+        const sleepEnd = new Date(date)
+        sleepEnd.setDate(sleepEnd.getDate() + 1)
+        sleepEnd.setHours(6 + Math.floor(Math.random() * 2))
+        sleepEnd.setMinutes(Math.floor(Math.random() * 60))
+        
+        // 만족도 (1-5 사이 랜덤)
+        const satisfaction = Math.floor(Math.random() * 5) + 1
+        
+        sleepData.push({
+          userId: '1', // admin 사용자 ID
+          sleepStartTime: sleepStart.toISOString(),
+          sleepEndTime: sleepEnd.toISOString(),
+          notes: Math.random() > 0.7 ? '수면의 질이 좋았습니다.' : null,
+          satisfaction,
+          createdAt: date.toISOString(),
+          updatedAt: date.toISOString()
+        })
+      }
+
+      // 초기 수면 데이터 삽입
+      for (const record of sleepData) {
+        await db.insert(sleepRecords).values(record)
+      }
+      console.log(`${sleepData.length}개의 수면 기록이 추가되었습니다.`)
+    } else {
+      console.log('수면 기록 데이터가 이미 존재합니다. 초기 데이터 삽입을 건너뜁니다.')
     }
 
     console.log('데이터베이스 마이그레이션이 완료되었습니다.')

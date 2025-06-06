@@ -5,9 +5,10 @@ import { SleepRecord, UpdateSleepRecord } from '../types/sleep';
 
 type Props = {
   viewModel: SleepViewModel;
+  onEditClick?: (record: SleepRecord) => void;
 };
 
-export const SleepRecordList = observer(({ viewModel }: Props) => {
+export const SleepRecordList = observer(({ viewModel, onEditClick }: Props) => {
   const [editingRecord, setEditingRecord] = useState<SleepRecord | null>(null);
   const [editForm, setEditForm] = useState<UpdateSleepRecord>({
     sleepStartTime: '',
@@ -72,35 +73,44 @@ export const SleepRecordList = observer(({ viewModel }: Props) => {
           key={record.id}
           className="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow"
         >
-          <div className="flex justify-between items-start">
-            <div>
-              <h3 className="text-lg font-semibold">
-                {formatDate(record.sleepStartTime)} - {formatDate(record.sleepEndTime)}
-              </h3>
-              <p className="text-gray-600">
+          <div className="flex flex-col space-y-2">
+            <div className="flex justify-between items-start">
+              <div className="flex-1">
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-gray-500">취침:</span>
+                  <span className="text-gray-700">{formatDate(record.sleepStartTime)}</span>
+                </div>
+                <div className="flex items-center space-x-2 mt-1">
+                  <span className="text-sm text-gray-500">기상:</span>
+                  <span className="text-gray-700">{formatDate(record.sleepEndTime)}</span>
+                </div>
+              </div>
+              <div className="flex space-x-2 ml-4">
+                <button
+                  onClick={() => onEditClick?.(record)}
+                  className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 whitespace-nowrap"
+                >
+                  수정
+                </button>
+                <button
+                  onClick={() => viewModel.deleteRecord(record.id)}
+                  className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 whitespace-nowrap"
+                >
+                  삭제
+                </button>
+              </div>
+            </div>
+            <div className="flex items-center space-x-4 text-sm">
+              <span className="text-gray-600">
                 수면 시간: {calculateSleepDuration(record.sleepStartTime, record.sleepEndTime)}
-              </p>
-              <p className="text-gray-600">
+              </span>
+              <span className="text-gray-600">
                 만족도: {record.satisfaction}/5
-              </p>
-              {record.notes && (
-                <p className="mt-2 text-gray-700">{record.notes}</p>
-              )}
+              </span>
             </div>
-            <div className="space-x-2">
-              <button
-                onClick={() => handleEditClick(record)}
-                className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
-              >
-                수정
-              </button>
-              <button
-                onClick={() => viewModel.deleteRecord(record.id)}
-                className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
-              >
-                삭제
-              </button>
-            </div>
+            {record.notes && (
+              <p className="text-gray-700 text-sm mt-1">{record.notes}</p>
+            )}
           </div>
         </div>
       ))}

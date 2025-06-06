@@ -1,19 +1,20 @@
 import { FastifyInstance } from 'fastify';
 import { getDb } from '../db';
 import { sleepRecords } from '../db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, and, gte, lte } from 'drizzle-orm';
 
 export default async function sleepRoutes(fastify: FastifyInstance) {
   // 수면 기록 생성
   fastify.post('/sleep', async (request, reply) => {
     const db = await getDb();
-    const { userId, sleepStartTime, sleepEndTime, notes } = request.body as any;
+    const { userId, sleepStartTime, sleepEndTime, notes, satisfaction } = request.body as any;
 
     const [record] = await db.insert(sleepRecords).values({
       userId,
       sleepStartTime,
       sleepEndTime,
       notes,
+      satisfaction,
     }).returning();
 
     return record;
@@ -23,11 +24,21 @@ export default async function sleepRoutes(fastify: FastifyInstance) {
   fastify.get('/sleep/:userId', async (request, reply) => {
     const db = await getDb();
     const { userId } = request.params as { userId: string };
+    const { startDate, endDate } = request.query as { startDate?: string; endDate?: string };
 
-    const records = await db.select().from(sleepRecords)
-      .where(eq(sleepRecords.userId, userId))
-      .orderBy(sleepRecords.createdAt);
+    let query = db.select().from(sleepRecords)
+      .where(eq(sleepRecords.userId, userId));
 
+    if (startDate && endDate) {
+      query = query.where(
+        and(
+          gte(sleepRecords.sleepStartTime, startDate),
+          lte(sleepRecords.sleepStartTime, endDate)
+        )
+      );
+    }
+
+    const records = await query.orderBy(sleepRecords.createdAt);
     return records;
   });
 
@@ -35,13 +46,14 @@ export default async function sleepRoutes(fastify: FastifyInstance) {
   fastify.put('/sleep/:id', async (request, reply) => {
     const db = await getDb();
     const { id } = request.params as { id: string };
-    const { sleepStartTime, sleepEndTime, notes } = request.body as any;
+    const { sleepStartTime, sleepEndTime, notes, satisfaction } = request.body as any;
 
     const [record] = await db.update(sleepRecords)
       .set({
         sleepStartTime,
         sleepEndTime,
         notes,
+        satisfaction,
         updatedAt: new Date().toISOString(),
       })
       .where(eq(sleepRecords.id, parseInt(id)))

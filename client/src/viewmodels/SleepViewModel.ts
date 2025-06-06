@@ -61,11 +61,11 @@ export class SleepViewModel {
   }
 
   // 수면 기록 목록 조회
-  async loadRecords(userId: string) {
+  async loadRecords(userId: string, startDate?: Date, endDate?: Date) {
     try {
       this.setLoading(true);
       this.setError(null);
-      const records = await sleepService.getRecords(userId);
+      const records = await sleepService.getRecords(userId, startDate, endDate);
       this.setRecords(records);
     } catch (error) {
       this.setError('수면 기록 조회에 실패했습니다.');

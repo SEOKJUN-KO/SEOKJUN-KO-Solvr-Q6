@@ -11,8 +11,12 @@ export const sleepService = {
   },
 
   // 수면 기록 목록 조회
-  getRecords: async (userId: string): Promise<SleepRecord[]> => {
-    const response = await axios.get(`${API_URL}/sleep/${userId}`);
+  getRecords: async (userId: string, startDate?: Date, endDate?: Date): Promise<SleepRecord[]> => {
+    const params = new URLSearchParams();
+    if (startDate) params.append('startDate', startDate.toISOString());
+    if (endDate) params.append('endDate', endDate.toISOString());
+    
+    const response = await axios.get(`${API_URL}/sleep/${userId}?${params.toString()}`);
     return response.data;
   },
 

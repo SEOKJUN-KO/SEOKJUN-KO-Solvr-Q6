@@ -10,7 +10,7 @@ import { SleepTracker } from './pages/SleepTracker'
 import { SleepViewModel } from './viewmodels/SleepViewModel'
 
 // 임시 사용자 ID (실제로는 로그인 시스템에서 가져와야 함)
-const TEMP_USER_ID = 'user1';
+const TEMP_USER_ID = '1';
 
 function App() {
   const sleepViewModel = new SleepViewModel();

@@ -1,14 +1,22 @@
 import { observer } from 'mobx-react-lite';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { SleepViewModel } from '../viewmodels/SleepViewModel';
-import { NewSleepRecord } from '../types/sleep';
+import { NewSleepRecord, SleepRecord } from '../types/sleep';
 
 type Props = {
   viewModel: SleepViewModel;
   userId: string;
+  editingRecord?: SleepRecord;
+  onCancel?: () => void;
 };
 
-export const SleepRecordForm = observer(({ viewModel, userId }: Props) => {
+const formatDateForInput = (dateString: string) => {
+  const date = new Date(dateString);
+  const pad = (n: number) => n.toString().padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+};
+
+export const SleepRecordForm = observer(({ viewModel, userId, editingRecord, onCancel }: Props) => {
   const [formData, setFormData] = useState<NewSleepRecord>({
     userId,
     sleepStartTime: '',
@@ -17,10 +25,16 @@ export const SleepRecordForm = observer(({ viewModel, userId }: Props) => {
     satisfaction: 3,
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await viewModel.createRecord(formData);
+  useEffect(() => {
+    if (editingRecord) {
+      setFormData({
+        userId,
+        sleepStartTime: formatDateForInput(editingRecord.sleepStartTime),
+        sleepEndTime: formatDateForInput(editingRecord.sleepEndTime),
+        notes: editingRecord.notes || '',
+        satisfaction: editingRecord.satisfaction,
+      });
+    } else {
       setFormData({
         userId,
         sleepStartTime: '',
@@ -28,8 +42,31 @@ export const SleepRecordForm = observer(({ viewModel, userId }: Props) => {
         notes: '',
         satisfaction: 3,
       });
+    }
+  }, [editingRecord, userId]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      if (editingRecord) {
+        await viewModel.updateRecord(editingRecord.id, {
+          ...formData,
+          sleepStartTime: editingRecord.sleepStartTime,
+          sleepEndTime: editingRecord.sleepEndTime,
+        });
+        onCancel?.();
+      } else {
+        await viewModel.createRecord(formData);
+        setFormData({
+          userId,
+          sleepStartTime: '',
+          sleepEndTime: '',
+          notes: '',
+          satisfaction: 3,
+        });
+      }
     } catch (error) {
-      console.error('수면 기록 생성 실패:', error);
+      console.error('수면 기록 저장 실패:', error);
     }
   };
 
@@ -45,34 +82,33 @@ export const SleepRecordForm = observer(({ viewModel, userId }: Props) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded-lg shadow">
-      <h2 className="text-xl font-semibold mb-4">수면 기록 추가</h2>
+      <h2 className="text-xl font-semibold mb-4">
+        {editingRecord ? '수면 기록 수정' : '수면 기록 추가'}
+      </h2>
       
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          취침 시간
-        </label>
-        <input
-          type="datetime-local"
-          name="sleepStartTime"
-          value={formData.sleepStartTime}
-          onChange={handleChange}
-          required
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          기상 시간
-        </label>
-        <input
-          type="datetime-local"
-          name="sleepEndTime"
-          value={formData.sleepEndTime}
-          onChange={handleChange}
-          required
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700">취침 시간</label>
+          <input
+            type="datetime-local"
+            name="sleepStartTime"
+            value={formData.sleepStartTime}
+            onChange={handleChange}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            disabled={viewModel.loading || editingRecord !== undefined}
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">기상 시간</label>
+          <input
+            type="datetime-local"
+            name="sleepEndTime"
+            value={formData.sleepEndTime}
+            onChange={handleChange}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            disabled={viewModel.loading || editingRecord !== undefined}
+          />
+        </div>
       </div>
 
       <div>
@@ -113,13 +149,24 @@ export const SleepRecordForm = observer(({ viewModel, userId }: Props) => {
         </div>
       </div>
 
-      <button
-        type="submit"
-        disabled={viewModel.loading}
-        className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
-      >
-        {viewModel.loading ? '저장 중...' : '기록하기'}
-      </button>
+      <div className="flex space-x-2">
+        {editingRecord && (
+          <button
+            type="button"
+            onClick={onCancel}
+            className="flex-1 bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+          >
+            취소
+          </button>
+        )}
+        <button
+          type="submit"
+          disabled={viewModel.loading}
+          className={`${editingRecord ? 'flex-1' : 'w-full'} bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50`}
+        >
+          {viewModel.loading ? '저장 중...' : (editingRecord ? '수정하기' : '기록하기')}
+        </button>
+      </div>
     </form>
   );
 }); 
