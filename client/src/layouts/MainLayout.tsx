@@ -24,12 +24,6 @@ const MainLayout = () => {
               >
                 수면 기록
               </Link>
-              <Link
-                to="/users"
-                className="text-neutral-600 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium"
-              >
-                유저 관리
-              </Link>
             </nav>
           </div>
         </div>
