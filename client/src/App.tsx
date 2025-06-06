@@ -8,6 +8,7 @@ import EditUserPage from './routes/EditUserPage'
 import NotFoundPage from './routes/NotFoundPage'
 import { SleepTracker } from './pages/SleepTracker'
 import { SleepViewModel } from './viewmodels/SleepViewModel'
+import Analysis from './pages/Analysis'
 
 // 임시 사용자 ID (실제로는 로그인 시스템에서 가져와야 함)
 const TEMP_USER_ID = '1';
@@ -26,6 +27,7 @@ function App() {
           <Route path=":id" element={<UserDetailPage />} />
           <Route path=":id/edit" element={<EditUserPage />} />
         </Route>
+        <Route path="analysis" element={<Analysis />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>

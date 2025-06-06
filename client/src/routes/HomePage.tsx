@@ -23,6 +23,9 @@ const HomePage = () => {
         <Link to="/sleep" className="px-8 py-3 rounded-lg bg-blue-600 text-white text-lg font-semibold shadow hover:bg-blue-700 transition">
           수면 기록 시작하기
         </Link>
+        <Link to="/analysis" className="px-8 py-3 rounded-lg bg-amber-500 text-white text-lg font-semibold shadow hover:bg-amber-600 transition">
+          수면 분석 보기
+        </Link>
       </div>
       <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="card">

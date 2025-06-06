@@ -8,7 +8,7 @@ const MainLayout = () => {
           <div className="flex justify-between items-center">
             <div className="flex items-center">
               <Link to="/" className="text-xl font-bold text-primary-600">
-                수면 트래커
+                Deep Sleep
               </Link>
             </div>
             <nav className="flex space-x-4">
@@ -36,7 +36,7 @@ const MainLayout = () => {
       <footer className="bg-white border-t border-neutral-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <p className="text-center text-neutral-500 text-sm">
-            &copy; {new Date().getFullYear()} 수면 트래커. All rights reserved.
+            &copy; {new Date().getFullYear()} Deep Sleep. All rights reserved.
           </p>
         </div>
       </footer>

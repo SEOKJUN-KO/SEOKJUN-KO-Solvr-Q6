@@ -3,6 +3,7 @@ import { AppContext } from '../types/context'
 import { createUserRoutes } from './userRoutes'
 import healthRoutes from './healthRoutes'
 import sleepRoutes from './sleep'
+import analysisRoutes from './analysis'
 
 // 모든 라우트 등록
 export const createRoutes = (context: AppContext) => async (fastify: FastifyInstance) => {
@@ -14,4 +15,7 @@ export const createRoutes = (context: AppContext) => async (fastify: FastifyInst
 
   // 수면 기록 관련 라우트
   fastify.register(sleepRoutes, { prefix: '/api' })
+
+  // 분석 관련 라우트
+  fastify.register(analysisRoutes)
 }

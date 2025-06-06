@@ -101,44 +101,54 @@ async function runMigration() {
     }
 
     if ((await existingSleepRecords).length === 0) {
-      // 초기 수면 데이터 생성 (최근 2개월)
-      const now = new Date()
-      const sleepData = []
-      
+      // 과학적 개념 반영: 현실적인 초기 수면 데이터 생성 (최근 2개월)
+      const now = new Date();
+      const sleepData = [];
       for (let i = 0; i < 60; i++) {
-        const date = new Date(now)
-        date.setDate(date.getDate() - i)
-        
-        // 취침 시간 (저녁 11시 ~ 새벽 1시 사이 랜덤)
-        const sleepStart = new Date(date)
-        sleepStart.setHours(23 + Math.floor(Math.random() * 2))
-        sleepStart.setMinutes(Math.floor(Math.random() * 60))
-        
-        // 기상 시간 (아침 6시 ~ 8시 사이 랜덤)
-        const sleepEnd = new Date(date)
-        sleepEnd.setDate(sleepEnd.getDate() + 1)
-        sleepEnd.setHours(6 + Math.floor(Math.random() * 2))
-        sleepEnd.setMinutes(Math.floor(Math.random() * 60))
-        
-        // 만족도 (1-5 사이 랜덤)
-        const satisfaction = Math.floor(Math.random() * 5) + 1
-        
+        const date = new Date(now);
+        date.setDate(date.getDate() - i);
+        const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+        // 사회적 시차: 주말은 평일보다 2시간 늦게 자고 일어남
+        const baseSleepStartHour = isWeekend ? 1.5 : 23.5;
+        const baseSleepEndHour = isWeekend ? 9.5 : 7.5;
+        // 수면 사이클(90분 단위) 반영: 6, 7.5, 9시간 등 배수로 맞추는 날이 많음
+        let cycleHours = [6, 7.5, 9][Math.floor(Math.random() * 3)];
+        // 20% 확률로 일부러 애매하게(사이클 깨짐)
+        if (Math.random() < 0.2) cycleHours += (Math.random() - 0.5) * 0.7;
+        // 취침 시간에 약간의 변동성
+        const sleepStartHour = baseSleepStartHour + (Math.random() - 0.5) * 0.5;
+        const sleepStart = new Date(date);
+        sleepStart.setHours(Math.floor(sleepStartHour));
+        sleepStart.setMinutes(Math.floor((sleepStartHour % 1) * 60));
+        // 기상 시간 = 취침 시간 + cycleHours
+        const sleepEnd = new Date(sleepStart);
+        sleepEnd.setHours(sleepEnd.getHours() + Math.floor(cycleHours));
+        sleepEnd.setMinutes(sleepEnd.getMinutes() + Math.floor((cycleHours % 1) * 60));
+        // 만족도: 90분 배수(6,7.5,9)에 가까우면 4~5, 사이클 깨지면 2~3
+        // 주말 사회적 시차(2시간 이상 차이)면 만족도 2~3
+        let satisfaction = 4;
+        const cycleRemainder = Math.abs((cycleHours * 60) % 90);
+        if (cycleRemainder > 15) satisfaction = 2 + Math.round(Math.random());
+        else if (cycleHours < 6) satisfaction = 2 + Math.round(Math.random());
+        else satisfaction = 4 + Math.round(Math.random());
+        // 주말 사회적 시차(2시간 이상)면 만족도 낮게
+        if (isWeekend && Math.abs(baseSleepStartHour - 23.5) >= 2) satisfaction = 2 + Math.round(Math.random());
+        // 특이사항: 15% 확률로 추가
+        const notes = Math.random() < 0.15 ? (satisfaction <= 3 ? '잠을 설쳤다.' : '수면의 질이 좋았습니다.') : null;
         sleepData.push({
-          userId: '1', // admin 사용자 ID
+          userId: '1',
           sleepStartTime: sleepStart.toISOString(),
           sleepEndTime: sleepEnd.toISOString(),
-          notes: Math.random() > 0.7 ? '수면의 질이 좋았습니다.' : null,
+          notes,
           satisfaction,
           createdAt: date.toISOString(),
-          updatedAt: date.toISOString()
-        })
+          updatedAt: date.toISOString(),
+        });
       }
-
-      // 초기 수면 데이터 삽입
       for (const record of sleepData) {
-        await db.insert(sleepRecords).values(record)
+        await db.insert(sleepRecords).values(record);
       }
-      console.log(`${sleepData.length}개의 수면 기록이 추가되었습니다.`)
+      console.log(`${sleepData.length}개의 수면 기록이 추가되었습니다.`);
     } else {
       console.log('수면 기록 데이터가 이미 존재합니다. 초기 데이터 삽입을 건너뜁니다.')
     }
